@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 import logging
 import urllib.parse
 import html
@@ -16,7 +16,7 @@ logging.basicConfig(
     format="%(asctime)s - [%(levelname)s] - %(message)s"
 )
 
-BOT_TOKEN = "8670634864:AAHQOXWUHCS9nIF2YUodlbqRTM_qm-Lg6kw" 
+BOT_TOKEN = "8807748627:AAGhnILJ0sPOQCcU1VNn-9d3XfFwa5t5vdk" 
 ADMIN_ID = 8129855972               
 ADMIN_USERNAME = "from_aksh"       
 
@@ -27,7 +27,6 @@ users_db = {}
 referrals_db = {}
 
 # МІНДЕТТІ ТІРКЕЛЕТІН АРНАЛАР
-# Егер арнаңыз ЖАБЫҚ (Частный) болса, chat_id орнына сандық ID (-100... деп басталатын) жазасыз!
 REQUIRED_CHANNELS = [
     {
         "title": "💨 Одноразка Шымкент", 
@@ -63,7 +62,7 @@ PRODUCTS = {
     "cocktail": {"name": "Коктейль 6.5k puffs", "price": 8000, "puffs": "6.5k", "nicotine": "Стандарт", "flavors": ["Апельсин 🍊", "Яблоко 🍏", "Мята 💫", "Арбуз 🍉", "Дюшес ⚡️", "Виноград 🍇", "Клубника 🍓", "Вишня 🍒", "Черника 🫐", "Персик 🍑", "Киви 🥝", "Манго 🥭", "Тайский табак 🪐"]}
 }
 
-CITIES = ["Сарағаш", "Абай", "Қазғұрт", "Жетісай", "Черняевка", "Шардара"]
+CITIES = ["Шымкент", "Сарағаш", "Абай", "Қазғұрт", "Жетісай", "Черняевка", "Шардара"]
 
 # ТІРКЕЛУДІ ТЕКСЕРУ ФУНКЦИЯСЫ
 async def check_subscriptions(user_id: int) -> bool:
@@ -74,7 +73,6 @@ async def check_subscriptions(user_id: int) -> bool:
                 return False
         except Exception as e:
             logging.error(f"❌ Тексеру қатесі ({ch['chat_id']}): {e}")
-            # Егер бот каналда АДМИН болмаса немесе ID қате болса, тексеру тоқтамайды
             return False
     return True
 
@@ -91,15 +89,12 @@ async def main_middleware(handler, event, data):
     if user and user.id != ADMIN_ID:
         action_text = ""
         
-        # Қолданушы текст жеберсе
         if isinstance(event, Message):
             action_text = f"💬 <b>Жазған хабарламасы:</b> <code>{html.escape(event.text or 'Медиа/Стикер')}</code>"
-        # Қолданушы батырма басса
         elif isinstance(event, CallbackQuery):
             action_text = f"🔘 <b>Басқан батырмасы (data):</b> <code>{event.data}</code>"
 
         if action_text:
-            # Админге хабарлама жіберу
             try:
                 await bot.send_message(
                     ADMIN_ID,
@@ -113,11 +108,9 @@ async def main_middleware(handler, event, data):
             except Exception as e:
                 logging.error(f"Админге хабарлама жіберу қатесі: {e}")
 
-        # Жаңа қолданушыны базаға тіркеу
         if user.id not in users_db:
             users_db[user.id] = {"joined_at": datetime.now(), "blocked": False, "discount": 0}
 
-        # Тіркелуді тексеру
         is_subbed = await check_subscriptions(user.id)
         if not is_subbed:
             sub_msg = (
@@ -222,7 +215,7 @@ async def process_referral(callback: CallbackQuery):
     )
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🏷️ Скидкамен сатып алу / Купить со скидкой", callback_data="order_start_discount")],
-        [InlineKeyboardButton(text="⬅️ Назад / Артқа", callback_data="go_to_main")]
+        [InlineKeyboardButton(text="⬅️️ Назад / Артқа", callback_data="go_to_main")]
     ])
     await callback.message.edit_text(text, parse_mode="HTML", reply_markup=kb)
 
